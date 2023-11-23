@@ -5,10 +5,9 @@ import "./App.css";
 function App() {
   const [url, setUrl] = useState<string>("");
   const [lastCheckedUrl, setLastCheckedUrl] = useState<string>("");
-  const [urlExists,setUrlExists] = useState<boolean | null>(null);
-  const [urlType, setUrlType] = useState<"file" | "folder" | null>(null)
+  const [urlExists, setUrlExists] = useState<boolean | null>(null);
+  const [urlType, setUrlType] = useState<"file" | "folder" | null>(null);
 
-  // Function to check URL format
   const isValidUrl = (url: string): boolean => {
     const pattern = new RegExp(
       "^(https?:\\/\\/)?" + // protocol
@@ -18,31 +17,29 @@ function App() {
         "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
         "(\\#[-a-z\\d_]*)?$",
       "i"
-    ); // fragment locator
+    );
     return !!pattern.test(url);
   };
-  // Function to simulate URL existence check
-  const checkUrlExistence = (url:string) => {
-    console.log("checking URL" ,url)
-setLastCheckedUrl(url);
 
-//Mocking the existence Check
-const exists = Math.random() < 0.5;
-setUrlExists(exists);
-setUrlType(exists ? (Math.random() < 0.5 ? "file" : "folder") : null );
-setLastCheckedUrl(url)
-  }
+  const checkUrlExistence = (url: string) => {
+    console.log("checking URL", url);
+    setLastCheckedUrl(url);
 
-  //Throttle the URL existence check
-  useEffect(()=>{
-const handeler = setTimeout(() => {
-  if (url && isValidUrl(url)) {
-    checkUrlExistence(url)
-  }
-},1000);//1 second delay
+    const exists = Math.random() < 0.5;
+    setUrlExists(exists);
+    setUrlType(exists ? (Math.random() < 0.5 ? "file" : "folder") : null);
+    setLastCheckedUrl(url);
+  };
 
-return () => clearTimeout(handeler)
-  },[url])
+  useEffect(() => {
+    const handeler = setTimeout(() => {
+      if (url && isValidUrl(url)) {
+        checkUrlExistence(url);
+      }
+    }, 1000);
+
+    return () => clearTimeout(handeler);
+  }, [url]);
 
   return (
     <div className="App">
@@ -55,19 +52,20 @@ return () => clearTimeout(handeler)
           placeholder="Enter Url"
         />
         <div>
-          {url &&
-            (isValidUrl(url) ? (
-              <span>Valid URL</span>
-            ) : (
-              <span>Invalid URL</span>
-            ))}
+          {url && (
+            <span className={isValidUrl(url) ? "valid" : "invalid"}>
+              {isValidUrl(url) ? "Valid URL" : "Invalid URL"}
+            </span>
+          )}
         </div>
         {lastCheckedUrl && (
-          <div>
-            Last checked URL: {lastCheckedUrl} <br/>
-            {urlExists !== null ? (
-              urlExists ? `Exists as a ${urlType}` : 'Does not exist'
-            ) : ''}
+          <div className="result">
+            Last checked URL: {lastCheckedUrl} <br />
+            {urlExists !== null
+              ? urlExists
+                ? `Exists as a ${urlType}`
+                : "Does not exist"
+              : ""}
           </div>
         )}
       </header>
