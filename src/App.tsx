@@ -21,24 +21,30 @@ function App() {
     return !!pattern.test(url);
   };
 
-  const checkUrlExistence = (url: string) => {
-    console.log("checking URL", url);
-    setLastCheckedUrl(url);
+  const checkUrlExistence = async (url: string): Promise<{ exists: boolean; type: "file" | "folder" | null }> => {
+    // Simulating a network delay
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    await delay(2000); // Delay of 2 seconds
 
-    const exists = Math.random() < 0.5;
-    setUrlExists(exists);
-    setUrlType(exists ? (Math.random() < 0.5 ? "file" : "folder") : null);
-    setLastCheckedUrl(url);
+    // Mocking the existence check
+    const exists = Math.random() < 0.5; 
+    const type = exists ? (Math.random() < 0.5 ? "file" : "folder") : null;
+    
+    return { exists, type };
   };
 
+  
   useEffect(() => {
-    const handeler = setTimeout(() => {
+    const handler = setTimeout(async () => {
       if (url && isValidUrl(url)) {
-        checkUrlExistence(url);
+        const response = await checkUrlExistence(url);
+        setUrlExists(response.exists);
+        setUrlType(response.type);
+        setLastCheckedUrl(url);
       }
-    }, 1000);
+    }, 1000); // 1 second delay
 
-    return () => clearTimeout(handeler);
+    return () => clearTimeout(handler);
   }, [url]);
 
   return (
