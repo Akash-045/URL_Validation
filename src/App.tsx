@@ -3,13 +3,16 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
+  // State for the URL input
   const [url, setUrl] = useState<string>("");
   const [lastCheckedUrl, setLastCheckedUrl] = useState<string>("");
   const [urlExists, setUrlExists] = useState<boolean | null>(null);
   const [urlType, setUrlType] = useState<"file" | "folder" | null>(null);
 
+  // Function to validate the URL format
   const isValidUrl = (url: string): boolean => {
     const pattern = new RegExp(
+      // Regular expression for URL validation
       "^(https?:\\/\\/)?" + // protocol
         "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
         "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
@@ -18,9 +21,9 @@ function App() {
         "(\\#[-a-z\\d_]*)?$",
       "i"
     );
-    return !!pattern.test(url);
+    return pattern.test(url);
   };
-
+// Mock function to simulate URL existence check
   const checkUrlExistence = async (url: string): Promise<{ exists: boolean; type: "file" | "folder" | null }> => {
     // Simulating a network delay
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -33,7 +36,7 @@ function App() {
     return { exists, type };
   };
 
-  
+  // Effect for checking URL existence
   useEffect(() => {
     const handler = setTimeout(async () => {
       if (url && isValidUrl(url)) {
